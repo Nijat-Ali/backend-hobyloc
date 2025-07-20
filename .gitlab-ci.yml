@@ -1,0 +1,12 @@
+stages:
+    - deploy
+
+deploy:
+    stage: deploy
+    rules:
+        - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    before_script:
+        - apt-get update && apt-get install sshpass && apt-get install make
+        - chmod 400 $SSH_KEY
+    script:
+        - sshpass -p $SSH_PASS ssh -o "StrictHostKeyChecking=no" $USER_NAME@$HOST "cd /home/hobyloc_prod_user/backend && git pull && make docker-restart"
